@@ -7,7 +7,12 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+      if (params["sort"])
+        @movies = Movie.order(params["sort"])
+        flash[:hilite] = params["sort"]
+      else
+        @movies= Movie.all
+      end
   end
 
   def new

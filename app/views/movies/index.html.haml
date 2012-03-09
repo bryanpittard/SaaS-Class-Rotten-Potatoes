@@ -4,9 +4,15 @@
 %table#movies
   %thead
     %tr
-      %th Movie Title
+      - if flash[:hilite] == "title"
+        %th#title_header.hilite= link_to "Movie Title", movies_path({:sort => "title"})
+      - elsif
+        %th#title_header= link_to "Movie Title", movies_path({:sort => "title"})
       %th Rating
-      %th Release Date
+      - if flash[:hilite] == "release_date"
+        %th#release_date_header.hilite= link_to "Release Date", movies_path({:sort => "release_date"})
+      - elsif
+        %th#release_date_header= link_to "Release Date", movies_path({:sort => "release_date"})
       %th More Info
   %tbody
     - @movies.each do |movie|
