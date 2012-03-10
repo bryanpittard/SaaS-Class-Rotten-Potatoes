@@ -7,11 +7,21 @@ class MoviesController < ApplicationController
   end
 
   def index
-      if (params["sort"])
-        @movies = Movie.order(params["sort"])
-        flash[:hilite] = params["sort"]
+      @all_ratings = {'G'=>false,'PG'=>false,'PG-13'=>false,'R'=>false}
+      if (params["ratings"])
+        # have to parse ratings = {"G"=>"1","PG"=>"1"}
+        # into where(:rating, ["G", "PG"])
+        ratings = Array.new
+        params["ratings"].each do |k, v| 
+          if v == "1" 
+            @all_ratings[k] = true
+          end
+          ratings.push(k)
+        end
+        @movies = Movie.where(:rating => ratings).order(params["sort"])
       else
-        @movies= Movie.all
+        @movies = Movie.order(params["sort"])
+        flash[:sort] = params["sort"]
       end
   end
 
