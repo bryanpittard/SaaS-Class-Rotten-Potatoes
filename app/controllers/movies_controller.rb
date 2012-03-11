@@ -22,9 +22,12 @@ class MoviesController < ApplicationController
       if (params["ratings"])
         session["ratings"] = params["ratings"]
         ratings_hash = params["ratings"]
-      elsif session["ratings"]
+      elsif session["ratings"] and !params["commit"]
         ratings_hash = session["ratings"]
+        #raise ratings_hash.inspect
+        redirect_to movies_path( :ratings => ratings_hash )
       else
+        session["ratings"] = params["ratings"]
         ratings_hash = nil
       end
         
