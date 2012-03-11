@@ -8,20 +8,41 @@ class MoviesController < ApplicationController
 
   def index
       @all_ratings = {'G'=>false,'PG'=>false,'PG-13'=>false,'R'=>false}
+      if (params["sort"])
+        session["sort"] = params["sort"]
+        sort = params["sort"]
+        flash[:sort] = sort
+      elsif (session["sort"])
+        sort = session["sort"]
+        flash[:sort] = sort
+      else
+        sort = nil
+      end
+      
       if (params["ratings"])
+        session["ratings"] = params["ratings"]
+        ratings_hash = params["ratings"]
+      elsif session["ratings"]
+        ratings_hash = session["ratings"]
+      else
+        ratings_hash = nil
+      end
+        
+      if ratings_hash != nil
         # have to parse ratings = {"G"=>"1","PG"=>"1"}
         # into where(:rating, ["G", "PG"])
         ratings = Array.new
-        params["ratings"].each do |k, v| 
+        ratings_hash.each do |k, v| 
           if v == "1" 
             @all_ratings[k] = true
           end
           ratings.push(k)
         end
-        @movies = Movie.where(:rating => ratings).order(params["sort"])
+        @movies = Movie.where(:rating => ratings).order(sort)
+      elsif sort != nil
+        @movies = Movie.order(sort)
       else
-        @movies = Movie.order(params["sort"])
-        flash[:sort] = params["sort"]
+        @movies = Movie.all
       end
   end
 
